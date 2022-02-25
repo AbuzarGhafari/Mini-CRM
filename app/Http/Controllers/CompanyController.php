@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use Illuminate\Http\Request;
+use App\Http\Requests\CompanyRequest;
 
 class CompanyController extends Controller
 {
@@ -36,16 +37,9 @@ class CompanyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CompanyRequest $request)
     {
-        $data = $request->validate([
-            'name' => 'required',
-            'email' => 'email',
-            'logo' => '',
-            'website' => ''
-        ]);
-
-        Company::create($data);
+        Company::create($request->validated());
 
         return redirect()->route('company.index');
     }
@@ -79,18 +73,11 @@ class CompanyController extends Controller
      * @param  \App\Models\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
+    public function update(CompanyRequest $request, Company $company)
     {
-        $data = $request->validate([
-            'name' => 'required',
-            'email' => 'email',
-            'logo' => '',
-            'website' => ''
-        ]);
+        $company->update($request->validated());
 
-        $company->update($data);
-
-        return redirect('/company/' . $company->id);
+        return redirect()->route('company.show', $company->id);
     }
 
     /**

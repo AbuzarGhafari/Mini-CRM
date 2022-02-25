@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
 use App\Models\Company;
+use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Http\Requests\EmployeeRequest;
 
 class EmployeeController extends Controller
 {
@@ -40,17 +41,9 @@ class EmployeeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(EmployeeRequest $request)
     {
-        $data = $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'email',
-            'phone' => '',
-            'company_id' => 'required'
-        ]);
-
-        Employee::create($data);
+        Employee::create($request->validated());
 
         return redirect()->route('employee.index');
     }
@@ -75,6 +68,7 @@ class EmployeeController extends Controller
     public function edit(Employee $employee)
     {
         $companies = Company::all();
+ 
         return view('employee.edit', compact('employee', 'companies'));
     }
 
@@ -85,19 +79,12 @@ class EmployeeController extends Controller
      * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Employee $employee)
+    public function update(EmployeeRequest $request, Employee $employee)
     {
-        $data = $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'email',
-            'phone' => '',
-            'company_id' => 'required'
-        ]);
 
-        $employee->update($data);
+        $employee->update($request->validated());
 
-        return redirect('/employee/' . $employee->id);
+        return redirect()->route('employee', $employee->id);
     }
 
     /**
